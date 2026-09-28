@@ -31,6 +31,7 @@
         <h3 style="color: #bc26fd; margin: 15px 0;">Price: ₹<span id="priceTxt">59</span></h3>
 
         <div class="qr-box">
+            <!-- आपका पूरी तरह चालू क्यूआर कोड -->
             <img id="qrImage" src="https://qrserver.com" alt="Scan to Pay">
         </div>
 
@@ -40,10 +41,10 @@
     </div>
 
     <script>
-        // आपकी टेलीग्राम और पेमेंट डिटेल्स
+        // सभी सेटिंग्स पूरी तरह लॉक हैं
         const BOT_TOKEN = "8770186204:AAFKib82jRhR6EvwlNBeGkvTQTMEbFxZEyI";
-        const CHAT_ID = "यहाँ_अपनी_CHAT_ID_डालें"; 
-        const YOUR_UPI = "YOUR_UPI_ID_HERE"; // यहाँ अपनी UPI ID डालें (जैसे ybl, oksbi वाली)
+        const YOUR_UPI = "7229934438-5@ybl"; 
+        const CHAT_ID = "6649097946"; 
 
         document.getElementById('panelSelect').addEventListener('change', function() {
             let price = this.value;
@@ -60,8 +61,7 @@
                 return;
             }
 
-            let message = `🔔 *नया पेमेंट आया है!*\n\n📌 *प्लान:* ${plan}\n🆔 *UTR:* \`\${utr}\`\n\nबैंक अकाउंट चेक करके अप्रूव करें।`;
-
+            let message = `🔔 *नया पेमेंट आया है!*\n\n📌 *प्लान:* \`\${plan}\`\n🆔 *UTR:* \`\${utr}\`\n\nबैंक अकाउंट चेक करके अप्रूव करें।`;
             let url = `https://telegram.org{BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
 
             fetch(url)
@@ -70,7 +70,7 @@
                     alert("UTR वेरिफिकेशन के लिए भेज दिया गया है! कृपया 2-5 मिनट इंतज़ार करें।");
                     document.getElementById('utrInput').value = "";
                 } else {
-                    alert("कोई गड़बड़ हुई। कृपया Chat ID और UPI सही से चेक करें।");
+                    alert("कोई तकनीकी गड़बड़ हुई। कृपया दोबारा कोशिश करें।");
                 }
             })
             .catch(error => alert("नेटवर्क एरर!"));
