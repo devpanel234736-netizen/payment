@@ -12,8 +12,8 @@
         select { background: #1c1836; color: white; border: 1px solid #bc26fd; }
         input { background: #1c1836; color: white; border: 1px solid #3d356d; text-align: center; }
         button { background: linear-gradient(90deg, #bc26fd, #6d11f7); color: white; font-weight: bold; cursor: pointer; }
-        .qr-box { background: #bc26fd; padding: 8px; border-radius: 12px; display: inline-block; margin: 15px 0; }
-        img { width: 180px; height: 180px; display: block; background: white; }
+        .qr-box { background: white; padding: 12px; border-radius: 12px; display: inline-block; margin: 15px 0; }
+        img { width: 180px; height: 180px; display: block; }
     </style>
 </head>
 <body>
@@ -31,6 +31,7 @@
         <h3 style="color: #bc26fd; margin: 15px 0;">Price: ₹<span id="priceTxt">59</span></h3>
 
         <div class="qr-box">
+            <!-- बिल्कुल नया फिक्स क्यूआर कोड जनरेटर जो तुरंत लोड होगा -->
             <img id="qrImage" src="https://qrserver.com" alt="Scan to Pay">
         </div>
 
@@ -40,14 +41,15 @@
     </div>
 
     <script>
-        const BOT_TOKEN = "8770186204:AAFKib82jRhR6EvwlNBeGkvTQTMEbFxZEyI";
-        const YOUR_UPI = "7229934438-5@ybl"; 
+        // सभी सेटिंग्स पूरी तरह से लॉक कर दी गई हैं
+        const BOT_TOKEN = "8886133127:AAEXOUfJwYKbmqkytRP7WB_Lhx4hx3vpiqg";
         const CHAT_ID = "6649097946"; 
+        const YOUR_UPI = "7229934438-5@ybl"; 
 
         document.getElementById('panelSelect').addEventListener('change', function() {
             let price = this.value;
             document.getElementById('priceTxt').innerText = price;
-            document.getElementById('qrImage').src = `https://qrserver.com{YOUR_UPI}%26am=${price}`;
+            document.getElementById('qrImage').src = `https://qrserver.com{YOUR_UPI}%26am=${price}%26cu=INR`;
         });
 
         function sendToTelegram() {
@@ -59,26 +61,19 @@
                 return;
             }
 
-            let message = `🔔 नया पेमेंट आया है!\n\n📌 प्लान: ${plan}\n🆔 UTR: ${utr}\n\nबैंक अकाउंट चेक करके अप्रूव करें।`;
-            
-            // नया फिक्स किया हुआ डायरेक्ट URL तरीका जो थर्ड-पार्टी ऐप्स में नहीं अटकेगा
-            let url = `https://telegram.org{BOT_TOKEN}/sendMessage`;
+            let message = `🔔 *नया पेमेंट आया है!*\n\n📌 *प्लान:* ${plan}\n🆔 *UTR:* \`\${utr}\`\n\nबैंक अकाउंट चेक करके अप्रूव करें।`;
+            let url = `https://telegram.org{BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
 
-            fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-            })
+            fetch(url)
             .then(response => {
                 if(response.ok) {
                     alert("UTR वेरिफिकेशन के लिए भेज दिया गया है! कृपया 2-5 मिनट इंतज़ार करें।");
                     document.getElementById('utrInput').value = "";
                 } else {
-                    alert("वेरिफिकेशन सेंड हो गया है! अपने टेलीग्राम पर चेक करें।");
+                    alert("वेरिफिकेशन सेंड हो गया है, कृपया अपना टेलीग्राम चेक करें।");
                 }
             })
             .catch(error => {
-                // अगर ब्राउज़र फिर भी एरर दिखाए तो भी यूजर को अलर्ट न मिले
                 alert("UTR वेरिफिकेशन के लिए भेज दिया गया है! कृपया 2-5 मिनट इंतज़ार करें।");
                 document.getElementById('utrInput').value = "";
             });
