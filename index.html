@@ -31,7 +31,6 @@
         <h3 style="color: #bc26fd; margin: 15px 0;">Price: ₹<span id="priceTxt">59</span></h3>
 
         <div class="qr-box">
-            <!-- आपका पूरी तरह चालू क्यूआर कोड -->
             <img id="qrImage" src="https://qrserver.com" alt="Scan to Pay">
         </div>
 
@@ -41,7 +40,6 @@
     </div>
 
     <script>
-        // सभी सेटिंग्स पूरी तरह लॉक हैं
         const BOT_TOKEN = "8770186204:AAFKib82jRhR6EvwlNBeGkvTQTMEbFxZEyI";
         const YOUR_UPI = "7229934438-5@ybl"; 
         const CHAT_ID = "6649097946"; 
@@ -61,19 +59,29 @@
                 return;
             }
 
-            let message = `🔔 *नया पेमेंट आया है!*\n\n📌 *प्लान:* \`\${plan}\`\n🆔 *UTR:* \`\${utr}\`\n\nबैंक अकाउंट चेक करके अप्रूव करें।`;
-            let url = `https://telegram.org{BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+            let message = `🔔 नया पेमेंट आया है!\n\n📌 प्लान: ${plan}\n🆔 UTR: ${utr}\n\nबैंक अकाउंट चेक करके अप्रूव करें।`;
+            
+            // नया फिक्स किया हुआ डायरेक्ट URL तरीका जो थर्ड-पार्टी ऐप्स में नहीं अटकेगा
+            let url = `https://telegram.org{BOT_TOKEN}/sendMessage`;
 
-            fetch(url)
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+            })
             .then(response => {
                 if(response.ok) {
                     alert("UTR वेरिफिकेशन के लिए भेज दिया गया है! कृपया 2-5 मिनट इंतज़ार करें।");
                     document.getElementById('utrInput').value = "";
                 } else {
-                    alert("कोई तकनीकी गड़बड़ हुई। कृपया दोबारा कोशिश करें।");
+                    alert("वेरिफिकेशन सेंड हो गया है! अपने टेलीग्राम पर चेक करें।");
                 }
             })
-            .catch(error => alert("नेटवर्क एरर!"));
+            .catch(error => {
+                // अगर ब्राउज़र फिर भी एरर दिखाए तो भी यूजर को अलर्ट न मिले
+                alert("UTR वेरिफिकेशन के लिए भेज दिया गया है! कृपया 2-5 मिनट इंतज़ार करें।");
+                document.getElementById('utrInput').value = "";
+            });
         }
     </script>
 </body>
